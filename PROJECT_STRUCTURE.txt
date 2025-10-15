@@ -1,0 +1,140 @@
+MESS-CANTEEN-BOOKING/
+│
+├── backend/                          # Node.js + Express Backend
+│   ├── config/
+│   │   └── db.js                    # MongoDB connection configuration
+│   │
+│   ├── middleware/
+│   │   └── auth.js                  # JWT authentication middleware
+│   │
+│   ├── models/                      # Mongoose Models
+│   │   ├── Student.js               # Student schema (USN, name, email, password)
+│   │   ├── Canteen.js               # Canteen schema (canteenId, name, status)
+│   │   ├── MenuItem.js              # Menu item schema (name, price, category)
+│   │   ├── Order.js                 # Order schema (orderId, items, qrCode)
+│   │   └── DailyCounter.js          # Daily counter schema (date, lastOrderCount)
+│   │
+│   ├── routes/                      # API Routes
+│   │   ├── auth.js                  # Authentication routes (login/register)
+│   │   ├── canteen.js               # Canteen routes (toggle, orders, verify)
+│   │   ├── menu.js                  # Menu CRUD routes
+│   │   └── order.js                 # Order creation and retrieval routes
+│   │
+│   ├── .env                         # Environment variables (MongoDB URI, JWT secret)
+│   ├── .gitignore                   # Git ignore file
+│   ├── package.json                 # Backend dependencies
+│   └── server.js                    # Express server entry point
+│
+├── frontend/                        # React Frontend
+│   ├── public/
+│   │   └── index.html               # HTML template
+│   │
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── ProtectedRoute.js    # Route protection component
+│   │   │
+│   │   ├── context/                 # React Context API
+│   │   │   ├── AuthContext.js       # Authentication state management
+│   │   │   └── CartContext.js       # Shopping cart state management
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Home.js              # Landing page with role selection
+│   │   │   │
+│   │   │   ├── student/             # Student Pages
+│   │   │   │   ├── StudentLogin.js          # Student login page
+│   │   │   │   ├── StudentRegister.js       # Student registration page
+│   │   │   │   ├── StudentDashboard.js      # View active canteens
+│   │   │   │   ├── MenuPage.js              # Browse menu items
+│   │   │   │   ├── CartPage.js              # Review cart and checkout
+│   │   │   │   ├── OrderConfirmation.js     # Order success with QR code
+│   │   │   │   └── MyOrders.js              # Order history
+│   │   │   │
+│   │   │   └── canteen/             # Canteen Pages
+│   │   │       ├── CanteenLogin.js          # Canteen login page
+│   │   │       ├── CanteenRegister.js       # Canteen registration page
+│   │   │       ├── CanteenDashboard.js      # View stats and orders
+│   │   │       ├── ManageMenu.js            # Add/Edit/Delete menu items
+│   │   │       └── VerifyOrder.js           # Verify orders by QR/number
+│   │   │
+│   │   ├── services/
+│   │   │   └── api.js               # Axios API service (all API calls)
+│   │   │
+│   │   ├── App.js                   # Main app component with routing
+│   │   ├── index.js                 # React entry point
+│   │   └── index.css                # Global styles with TailwindCSS
+│   │
+│   ├── .gitignore                   # Git ignore file
+│   ├── package.json                 # Frontend dependencies
+│   ├── postcss.config.js            # PostCSS configuration
+│   └── tailwind.config.js           # TailwindCSS configuration
+│
+├── .gitignore                       # Root git ignore
+├── README.md                        # Complete project documentation
+├── QUICKSTART.md                    # Quick setup guide
+├── PROJECT_SUMMARY.md               # Project overview and features
+├── COMMANDS.md                      # Useful commands reference
+└── PROJECT_STRUCTURE.txt            # This file - visual structure
+
+═══════════════════════════════════════════════════════════════════════
+
+📊 FILE COUNT SUMMARY:
+├── Backend Files: 15
+├── Frontend Files: 20+
+├── Documentation: 5
+└── Total: 40+ files
+
+═══════════════════════════════════════════════════════════════════════
+
+🔑 KEY COMPONENTS:
+
+BACKEND (Node.js + Express):
+├── 5 MongoDB Models (Student, Canteen, MenuItem, Order, DailyCounter)
+├── 4 Route Files (auth, canteen, menu, order)
+├── 13 API Endpoints
+├── JWT Authentication
+├── QR Code Generation
+└── Daily Counter Logic
+
+FRONTEND (React + TailwindCSS):
+├── 13 Page Components
+├── 2 Context Providers (Auth, Cart)
+├── 1 Protected Route Component
+├── Axios API Integration
+├── QR Code Display
+└── Responsive UI Design
+
+═══════════════════════════════════════════════════════════════════════
+
+🗄️ DATABASE COLLECTIONS:
+├── students          (User authentication and profile)
+├── canteens          (Canteen info and status)
+├── menuitems         (Food items with pricing)
+├── orders            (Order details with QR codes)
+└── dailycounters     (Sequential order numbering)
+
+═══════════════════════════════════════════════════════════════════════
+
+🌐 PORTS:
+├── Frontend:  http://localhost:3000
+├── Backend:   http://localhost:5000
+└── MongoDB:   mongodb://127.0.0.1:27017
+
+═══════════════════════════════════════════════════════════════════════
+
+🎯 MAIN FEATURES:
+✅ Student registration and login
+✅ Canteen registration and login
+✅ Browse active canteens
+✅ View menu by category
+✅ Add items to cart
+✅ Place orders (dummy payment)
+✅ Generate QR codes
+✅ Sequential order IDs (M1-20251015-23)
+✅ Order history
+✅ Canteen menu management (CRUD)
+✅ Toggle canteen status
+✅ Verify orders by QR or number
+✅ Real-time order tracking
+✅ Beautiful UI with TailwindCSS
+
+═══════════════════════════════════════════════════════════════════════
