@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { orderAPI } from '../../services/api';
 import { QRCodeSVG } from 'qrcode.react';
+import NotificationBell from '../../components/NotificationBell';
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -12,6 +13,13 @@ const MyOrders = () => {
 
   useEffect(() => {
     fetchOrders();
+    
+    // Poll for order status updates every 30 seconds
+    const intervalId = setInterval(() => {
+      fetchOrders();
+    }, 30000);
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   const fetchOrders = async () => {
@@ -27,7 +35,10 @@ const MyOrders = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
+      case 'pending':
       case 'confirmed':
+        return 'bg-orange-100 text-orange-800';
+      case 'ready':
         return 'bg-blue-100 text-blue-800';
       case 'served':
         return 'bg-green-100 text-green-800';
@@ -35,6 +46,22 @@ const MyOrders = () => {
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending':
+      case 'confirmed':
+        return '🍳 Being Prepared';
+      case 'ready':
+        return '✅ Ready for Pickup';
+      case 'served':
+        return '✓ Completed';
+      case 'cancelled':
+        return '✗ Cancelled';
+      default:
+        return status;
     }
   };
 
@@ -54,6 +81,7 @@ const MyOrders = () => {
               <h1 className="text-2xl font-bold text-gray-900">My Orders</h1>
               <p className="text-sm text-gray-600">View your order history</p>
             </div>
+            <NotificationBell />
           </div>
         </div>
       </header>
@@ -95,7 +123,7 @@ const MyOrders = () => {
                     </div>
                     <div className="text-right">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
-                        {order.status}
+                        {getStatusText(order.status)}
                       </span>
                       <p className="text-xl font-bold text-gray-900 mt-2">₹{order.totalAmount}</p>
                     </div>

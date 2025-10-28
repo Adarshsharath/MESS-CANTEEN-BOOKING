@@ -5,7 +5,7 @@ import { canteenAPI } from '../../services/api';
 
 const CanteenDashboard = () => {
   const [todayOrders, setTodayOrders] = useState([]);
-  const [stats, setStats] = useState({ total: 0, confirmed: 0, served: 0, revenue: 0 });
+  const [stats, setStats] = useState({ total: 0, pending: 0, ready: 0, served: 0, revenue: 0 });
   const [loading, setLoading] = useState(true);
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
@@ -44,13 +44,15 @@ const CanteenDashboard = () => {
       setTodayOrders(orders);
 
       // Calculate stats
-      const confirmed = orders.filter(o => o.status === 'confirmed').length;
+      const pending = orders.filter(o => o.status === 'pending' || o.status === 'confirmed').length;
+      const ready = orders.filter(o => o.status === 'ready').length;
       const served = orders.filter(o => o.status === 'served').length;
       const revenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
 
       setStats({
         total: orders.length,
-        confirmed,
+        pending,
+        ready,
         served,
         revenue,
       });
@@ -68,6 +70,16 @@ const CanteenDashboard = () => {
       updateUser({ status: newStatus });
     } catch (err) {
       alert('Failed to toggle status');
+    }
+  };
+
+  const handleMarkReady = async (orderId) => {
+    try {
+      await canteenAPI.markOrderReady(orderId);
+      // Refresh orders to show updated status
+      fetchTodayOrders();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to mark order as ready');
     }
   };
 
@@ -119,13 +131,13 @@ const CanteenDashboard = () => {
                 onClick={() => navigate('/canteen/menu')}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
-                Manage Menu
+                📋 Manage Menu
               </button>
               <button
-                onClick={() => navigate('/canteen/verify')}
-                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+                onClick={() => navigate('/canteen/scan-verify')}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all font-semibold"
               >
-                Verify Orders
+                📷 Scan & Verify
               </button>
               <button
                 onClick={handleLogout}
@@ -141,21 +153,25 @@ const CanteenDashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-md p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Total Orders Today</h3>
+            <h3 className="text-gray-600 text-sm font-medium mb-2">Total Orders</h3>
             <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
           </div>
           <div className="bg-white rounded-xl shadow-md p-6">
             <h3 className="text-gray-600 text-sm font-medium mb-2">Pending</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.confirmed}</p>
+            <p className="text-3xl font-bold text-orange-600">{stats.pending}</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h3 className="text-gray-600 text-sm font-medium mb-2">Ready</h3>
+            <p className="text-3xl font-bold text-blue-600">{stats.ready}</p>
           </div>
           <div className="bg-white rounded-xl shadow-md p-6">
             <h3 className="text-gray-600 text-sm font-medium mb-2">Served</h3>
             <p className="text-3xl font-bold text-green-600">{stats.served}</p>
           </div>
           <div className="bg-white rounded-xl shadow-md p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Revenue Today</h3>
+            <h3 className="text-gray-600 text-sm font-medium mb-2">Revenue</h3>
             <p className="text-3xl font-bold text-purple-600">₹{stats.revenue}</p>
           </div>
         </div>
@@ -175,30 +191,49 @@ const CanteenDashboard = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student USN</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {todayOrders.map((order) => (
                     <tr key={order._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{order.orderId}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">#{order.orderNumber}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{order.studentUSN}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{order.items.length} items</td>
                       <td className="px-4 py-3 text-sm font-semibold text-gray-900">₹{order.totalAmount}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                          order.status === 'pending' || order.status === 'confirmed' ? 'bg-orange-100 text-orange-800' : 
+                          order.status === 'ready' ? 'bg-blue-100 text-blue-800' : 
+                          'bg-green-100 text-green-800'
                         }`}>
-                          {order.status}
+                          {order.status.toUpperCase()}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {new Date(order.createdAt).toLocaleTimeString()}
+                      </td>
+                      <td className="px-4 py-3">
+                        {(order.status === 'pending' || order.status === 'confirmed') && (
+                          <button
+                            onClick={() => handleMarkReady(order.orderId)}
+                            className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition"
+                          >
+                            Mark Ready
+                          </button>
+                        )}
+                        {order.status === 'ready' && (
+                          <span className="text-xs text-blue-600 font-medium">Awaiting Pickup</span>
+                        )}
+                        {order.status === 'served' && (
+                          <span className="text-xs text-green-600 font-medium">✓ Completed</span>
+                        )}
                       </td>
                     </tr>
                   ))}

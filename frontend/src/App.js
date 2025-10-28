@@ -23,6 +23,7 @@ import CanteenDashboard from './pages/canteen/CanteenDashboard';
 import ManageMenu from './pages/canteen/ManageMenu';
 import VerifyOrder from './pages/canteen/VerifyOrder';
 import OperatingHours from './pages/canteen/OperatingHours';
+import ScanAndVerify from './pages/canteen/ScanAndVerify';
 
 function App() {
   return (
@@ -109,6 +110,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="canteen">
                   <OperatingHours />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/canteen/scan-verify"
+              element={
+                <ProtectedRoute requiredRole="canteen">
+                  <ScanAndVerify />
                 </ProtectedRoute>
               }
             />

@@ -2,6 +2,7 @@ import express from 'express';
 import Canteen from '../models/Canteen.js';
 import MenuItem from '../models/MenuItem.js';
 import Order from '../models/Order.js';
+import Notification from '../models/Notification.js';
 import { authenticateCanteen } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -79,6 +80,58 @@ router.get('/orders', authenticateCanteen, async (req, res) => {
   }
 });
 
+// Mark order as ready (after cooking)
+router.patch('/orders/:orderId/ready', authenticateCanteen, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const canteen = await Canteen.findById(req.userId);
+    
+    const order = await Order.findOne({ orderId });
+    
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    
+    if (order.canteenId !== canteen.canteenId) {
+      return res.status(403).json({ message: 'This order belongs to a different canteen' });
+    }
+    
+    if (order.status === 'served') {
+      return res.status(400).json({ message: 'Order already served' });
+    }
+    
+    if (order.status === 'ready') {
+      return res.status(400).json({ message: 'Order already marked as ready' });
+    }
+    
+    if (order.status !== 'pending' && order.status !== 'confirmed') {
+      return res.status(400).json({ message: 'Order cannot be marked as ready' });
+    }
+    
+    // Mark order as ready
+    order.status = 'ready';
+    order.readyAt = new Date();
+    await order.save();
+    
+    // Create notification for student
+    const notification = new Notification({
+      studentUSN: order.studentUSN,
+      orderId: order.orderId,
+      canteenName: canteen.name,
+      message: `Your order #${order.orderNumber} is ready for pickup!`,
+      type: 'order_ready'
+    });
+    await notification.save();
+    
+    res.json({
+      message: 'Order marked as ready',
+      order
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Verify order by order number or full order ID
 router.post('/verify', authenticateCanteen, async (req, res) => {
   try {
@@ -111,6 +164,7 @@ router.post('/verify', authenticateCanteen, async (req, res) => {
 
     // Mark order as served
     order.status = 'served';
+    order.servedAt = new Date();
     await order.save();
 
     res.json({

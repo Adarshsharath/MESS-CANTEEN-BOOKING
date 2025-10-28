@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import canteenRoutes from './routes/canteen.js';
 import menuRoutes from './routes/menu.js';
 import orderRoutes from './routes/order.js';
+import notificationRoutes from './routes/notification.js';
 import { initScheduler } from './services/scheduler.js';
 
 // Load environment variables
@@ -29,6 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/canteens', canteenRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

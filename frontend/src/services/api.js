@@ -38,6 +38,7 @@ export const canteenAPI = {
   getProfile: () => api.get('/canteens/profile'),
   getTodayOrders: () => api.get('/canteens/orders/today'),
   getAllOrders: () => api.get('/canteens/orders'),
+  markOrderReady: (orderId) => api.patch(`/canteens/orders/${orderId}/ready`),
   verifyOrder: (orderIdentifier) => api.post('/canteens/verify', { orderIdentifier }),
   getOperatingHours: () => api.get('/canteens/operating-hours'),
   updateOperatingHours: (data) => api.patch('/canteens/operating-hours', data),
@@ -57,6 +58,14 @@ export const orderAPI = {
   createOrder: (data) => api.post('/orders/create', data),
   getMyOrders: () => api.get('/orders/my-orders'),
   getOrderById: (orderId) => api.get(`/orders/${orderId}`),
+};
+
+// Notification API
+export const notificationAPI = {
+  getMyNotifications: () => api.get('/notifications/my-notifications'),
+  getUnreadCount: () => api.get('/notifications/unread-count'),
+  markAsRead: (notificationId) => api.patch(`/notifications/${notificationId}/read`),
+  markAllAsRead: () => api.patch('/notifications/mark-all-read'),
 };
 
 export default api;

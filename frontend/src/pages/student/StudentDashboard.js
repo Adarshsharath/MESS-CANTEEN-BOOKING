@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { canteenAPI } from '../../services/api';
 import { useCart } from '../../context/CartContext';
+import NotificationBell from '../../components/NotificationBell';
 
 const StudentDashboard = () => {
   const [canteens, setCanteens] = useState([]);
@@ -50,6 +51,7 @@ const StudentDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-3">
+              <NotificationBell />
               <button
                 onClick={() => navigate('/student/cart')}
                 className="relative bg-gradient-to-r from-primary-500 to-accent-500 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all font-semibold"
