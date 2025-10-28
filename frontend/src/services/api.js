@@ -39,6 +39,8 @@ export const canteenAPI = {
   getTodayOrders: () => api.get('/canteens/orders/today'),
   getAllOrders: () => api.get('/canteens/orders'),
   verifyOrder: (orderIdentifier) => api.post('/canteens/verify', { orderIdentifier }),
+  getOperatingHours: () => api.get('/canteens/operating-hours'),
+  updateOperatingHours: (data) => api.patch('/canteens/operating-hours', data),
 };
 
 // Menu API

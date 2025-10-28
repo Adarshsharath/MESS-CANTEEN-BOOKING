@@ -28,6 +28,20 @@ const canteenSchema = new mongoose.Schema({
     type: String,
     enum: ['active', 'inactive'],
     default: 'active'
+  },
+  operatingHours: {
+    enabled: {
+      type: Boolean,
+      default: false
+    },
+    openTime: {
+      type: String, // Format: "HH:MM" (24-hour format)
+      default: '09:00'
+    },
+    closeTime: {
+      type: String, // Format: "HH:MM" (24-hour format)
+      default: '17:00'
+    }
   }
 }, {
   timestamps: true

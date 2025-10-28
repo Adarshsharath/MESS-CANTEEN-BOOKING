@@ -7,12 +7,35 @@ const CanteenDashboard = () => {
   const [todayOrders, setTodayOrders] = useState([]);
   const [stats, setStats] = useState({ total: 0, confirmed: 0, served: 0, revenue: 0 });
   const [loading, setLoading] = useState(true);
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchTodayOrders();
+    fetchCanteenProfile();
+    
+    // Poll for status updates every 30 seconds
+    const intervalId = setInterval(() => {
+      fetchCanteenProfile();
+    }, 30000);
+    
+    return () => clearInterval(intervalId);
   }, []);
+
+  const fetchCanteenProfile = async () => {
+    try {
+      const response = await canteenAPI.getProfile();
+      const profile = response.data;
+      
+      // Update user context with latest profile data (status and operatingHours)
+      updateUser({
+        status: profile.status,
+        operatingHours: profile.operatingHours
+      });
+    } catch (err) {
+      console.error('Failed to fetch canteen profile');
+    }
+  };
 
   const fetchTodayOrders = async () => {
     try {
@@ -40,8 +63,9 @@ const CanteenDashboard = () => {
 
   const handleToggleStatus = async () => {
     try {
-      await canteenAPI.toggleStatus();
-      window.location.reload();
+      const response = await canteenAPI.toggleStatus();
+      const newStatus = response.data.status;
+      updateUser({ status: newStatus });
     } catch (err) {
       alert('Failed to toggle status');
     }
@@ -61,11 +85,18 @@ const CanteenDashboard = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{user?.name}</h1>
               <p className="text-sm text-gray-600">Canteen ID: {user?.canteenId}</p>
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-2 ${
-                user?.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {user?.status === 'active' ? '✓ Active' : '✗ Inactive'}
-              </span>
+              <div className="flex items-center gap-2 mt-2">
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                  user?.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  {user?.status === 'active' ? '✓ Active' : '✗ Inactive'}
+                </span>
+                {user?.operatingHours?.enabled && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                    ⏰ Auto-Schedule: {user.operatingHours.openTime} - {user.operatingHours.closeTime}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <button
@@ -77,6 +108,12 @@ const CanteenDashboard = () => {
                 }`}
               >
                 {user?.status === 'active' ? 'Deactivate' : 'Activate'}
+              </button>
+              <button
+                onClick={() => navigate('/canteen/operating-hours')}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+              >
+                ⏰ Operating Hours
               </button>
               <button
                 onClick={() => navigate('/canteen/menu')}

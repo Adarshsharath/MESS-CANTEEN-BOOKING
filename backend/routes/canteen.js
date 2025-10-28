@@ -122,4 +122,54 @@ router.post('/verify', authenticateCanteen, async (req, res) => {
   }
 });
 
+// Update operating hours
+router.patch('/operating-hours', authenticateCanteen, async (req, res) => {
+  try {
+    const { enabled, openTime, closeTime } = req.body;
+    const canteen = await Canteen.findById(req.userId);
+    
+    if (!canteen) {
+      return res.status(404).json({ message: 'Canteen not found' });
+    }
+
+    // Validate time format (HH:MM)
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (openTime && !timeRegex.test(openTime)) {
+      return res.status(400).json({ message: 'Invalid open time format. Use HH:MM' });
+    }
+    if (closeTime && !timeRegex.test(closeTime)) {
+      return res.status(400).json({ message: 'Invalid close time format. Use HH:MM' });
+    }
+
+    // Update operating hours
+    if (enabled !== undefined) canteen.operatingHours.enabled = enabled;
+    if (openTime) canteen.operatingHours.openTime = openTime;
+    if (closeTime) canteen.operatingHours.closeTime = closeTime;
+
+    await canteen.save();
+
+    res.json({
+      message: 'Operating hours updated successfully',
+      operatingHours: canteen.operatingHours
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get operating hours
+router.get('/operating-hours', authenticateCanteen, async (req, res) => {
+  try {
+    const canteen = await Canteen.findById(req.userId);
+    
+    if (!canteen) {
+      return res.status(404).json({ message: 'Canteen not found' });
+    }
+
+    res.json(canteen.operatingHours);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 export default router;
