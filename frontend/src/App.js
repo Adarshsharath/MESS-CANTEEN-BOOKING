@@ -25,6 +25,14 @@ import VerifyOrder from './pages/canteen/VerifyOrder';
 import OperatingHours from './pages/canteen/OperatingHours';
 import ScanAndVerify from './pages/canteen/ScanAndVerify';
 
+// Admin Pages
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ManageCanteens from './pages/admin/ManageCanteens';
+import ManageStudents from './pages/admin/ManageStudents';
+import Reports from './pages/admin/Reports';
+import Settings from './pages/admin/Settings';
+
 function App() {
   return (
     <Router>
@@ -118,6 +126,49 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="canteen">
                   <ScanAndVerify />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/canteens"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageCanteens />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/students"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageStudents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/reports"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Reports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Settings />
                 </ProtectedRoute>
               }
             />

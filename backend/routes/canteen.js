@@ -8,9 +8,15 @@ import { authenticateCanteen } from '../middleware/auth.js';
 const router = express.Router();
 
 // Get all active canteens (public route for students)
+// Only show canteens that are both active AND approved by admin
 router.get('/active', async (req, res) => {
   try {
-    const canteens = await Canteen.find({ status: 'active' }).select('-passwordHash');
+    const canteens = await Canteen.find({ 
+      status: 'active',
+      approvalStatus: 'approved'  // Only show admin-approved canteens
+    }).select('-passwordHash');
+    
+    console.log(`Found ${canteens.length} active and approved canteens for students`);
     res.json(canteens);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
