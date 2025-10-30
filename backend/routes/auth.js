@@ -107,13 +107,13 @@ router.post('/canteen/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Create new canteen
+    // Create new canteen (approvalStatus defaults to 'pending', status to 'inactive')
     const canteen = new Canteen({
       canteenId,
       name,
       email,
-      passwordHash,
-      status: 'active'
+      passwordHash
+      // Don't set status - let it default to 'inactive' until admin approves
     });
 
     await canteen.save();
@@ -126,15 +126,17 @@ router.post('/canteen/register', async (req, res) => {
     );
 
     res.status(201).json({
-      message: 'Canteen registered successfully',
+      message: 'Canteen registered successfully! Your registration is pending admin approval.',
       token,
       canteen: {
         id: canteen._id,
         canteenId: canteen.canteenId,
         name: canteen.name,
         email: canteen.email,
-        status: canteen.status
-      }
+        status: canteen.status,
+        approvalStatus: canteen.approvalStatus
+      },
+      pendingApproval: true
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

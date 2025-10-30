@@ -32,7 +32,7 @@ const Home = () => {
         </div>
 
         {/* Role Selection Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto pb-20">
           {/* Student Card */}
           <div className="group bg-white rounded-3xl shadow-soft hover:shadow-glow overflow-hidden transform hover:-translate-y-2 transition-all duration-300">
             <div className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500 p-10 text-white overflow-hidden">
@@ -155,6 +155,64 @@ const Home = () => {
                 >
                   Register Canteen
                 </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Admin Card */}
+          <div className="group bg-white rounded-3xl shadow-soft hover:shadow-glow overflow-hidden transform hover:-translate-y-2 transition-all duration-300 lg:col-span-1 md:col-span-2">
+            <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-10 text-white overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
+              <div className="relative z-10">
+                <div className="text-7xl mb-4 transform group-hover:scale-110 transition-transform">👑</div>
+                <h3 className="text-4xl font-bold mb-3">Admin Portal</h3>
+                <p className="text-indigo-100 text-lg">Manage the entire system with authority</p>
+              </div>
+            </div>
+            <div className="p-8">
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 font-medium">Approve canteen registrations</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 font-medium">View analytics & revenue</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 font-medium">Monitor student activity</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 font-medium">Export detailed reports</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <button
+                  onClick={() => navigate('/admin/login')}
+                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                >
+                  👑 Admin Access
+                </button>
+                <p className="text-xs text-center text-gray-500">Authorized Personnel Only</p>
               </div>
             </div>
           </div>
